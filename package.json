@@ -4,8 +4,17 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "build": "cross-env VUELECTRO_ENV=build vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "electron:run": "cross-env VUELECTRO_ENV=run electron app/electron-main.js",
+    "electron:serve": "cross-env VUELECTRO_ENV=serve vuelectro serve",
+    "electron:serve:file": "vuelectro clean && vue-cli-service build --mode=development && vuelectro compilemain && cross-env VUELECTRO_ENV=devprod electron app/electron-main.js",
+    "electron:prod": "vuelectro clean && cross-env VUELECTRO_ENV=build vue-cli-service build && vuelectro compilemain && cross-env VUELECTRO_ENV=prod NODE_ENV=production electron app/electron-main.js",
+    "electron:compile:main": "vuelectro compilemain",
+    "electron:compile:renderer": "vue-cli-service build --mode=development",
+    "electron:build": "cross-env VUELECTRO_ENV=build vuelectro build",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.2",
@@ -29,6 +38,16 @@
     "eslint-plugin-vue": "^7.0.0",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
-    "vue-cli-plugin-tailwind": "~2.0.6"
-  }
+    "vue-cli-plugin-tailwind": "~2.0.6",
+    "vuelectro": "^1.2.4",
+    "cross-env": "7.0.3",
+    "electron": "15.0.0",
+    "electron-devtools-installer": "3.2.0"
+  },
+  "main": "app/electron-main.js",
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }
