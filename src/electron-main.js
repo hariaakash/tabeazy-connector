@@ -89,3 +89,5 @@ app.on('activate', () => {
 app.on('quit', () => {
     process.exit();
 });
+
+require(path.resolve('./src/ipc'))
