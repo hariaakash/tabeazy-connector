@@ -13,6 +13,7 @@
     "electron:compile:main": "vuelectro compilemain",
     "electron:compile:renderer": "vue-cli-service build --mode=development",
     "electron:build": "cross-env VUELECTRO_ENV=build vuelectro build",
+    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
@@ -41,6 +42,7 @@
     "cross-env": "7.0.3",
     "electron": "15.0.0",
     "electron-devtools-installer": "3.2.0",
+    "electron-icon-builder": "^2.0.1",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^7.0.0",

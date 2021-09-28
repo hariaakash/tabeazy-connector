@@ -48,7 +48,8 @@ function createWindow () {
                 VUELECTRO_STATIC_PATH: __staticPath,
                 VUELECTRO_ENV: process.env.VUELECTRO_ENV
             })]
-        }
+        },
+        icon: path.join(__staticPath, 'icon.png'),
     });
 
     // Use the promise returned by loadURL() in combination with show:false and win.show() to avoid showing the window before content is loaded
