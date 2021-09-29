@@ -56,7 +56,14 @@ module.exports = {
     // An array of all the source files for the main process. Make sure to define each new main process source file you create here.
     // Also make sure to keep all your source files INSIDE the ./src/ directory
     // Path should be relative to ./src/ directory. Vuelectro will mirror the filenames and directory structure to your output automatically
-    srcFiles: ['electron-main.js', 'preload.js'],
+    srcFiles: [
+      'electron-main.js',
+      'preload.js',
+      'ipc/index.js',
+      'helpers/axios.js',
+      'helpers/store.js',
+      'helpers/cron.js',
+    ],
 
     // webpack configuration for main process goes here
     // Visit https://webpack.js.org/guides/getting-started/#using-a-configuration for instructions
@@ -104,9 +111,9 @@ module.exports = {
       output: 'dist_electron',
     },
     files: [
-      '!src/*',
-      '!public/*',
-      '!resources/*',
+      '!src${/*}',
+      '!public${/*}',
+      '!resources${/*}',
       '!babel.config.js',
       '!vue.config.js',
       '!vuelectro.config.js',

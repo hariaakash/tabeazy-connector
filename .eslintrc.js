@@ -17,5 +17,10 @@ module.exports = {
     'no-return-assign': 0,
     'import/no-extraneous-dependencies': 0,
     "linebreak-style": 0,
+    "no-underscore-dangle": 0,
   },
+  globals: {
+    __resPath: true,
+    __staticPath: true,
+  }
 };
