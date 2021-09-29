@@ -29,7 +29,10 @@ jobs:
         run: npm run electron:build
 
       - name: Check directory
-        run: ls ./dist_electron/
+        run: ls ./dist_electron
+
+      - name: Check directory 2
+        run: ls .
 
       # - name: Release
       #   uses: softprops/action-gh-release@v1
