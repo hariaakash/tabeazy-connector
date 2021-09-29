@@ -94,11 +94,22 @@ export default {
       {
         status: 'Success',
         message: '🛸 Synchronization going good',
+        action: 'destroyConnector',
+        button: 'Stop',
+      },
+      {
+        status: 'Idle',
+        message: '🧘 Meditating',
+        action: 'startConnector',
+        button: 'Start',
       },
     ],
   }),
   async created() {
-    await this.check();
+    await this.startConnector();
+  },
+  async beforeUnmount() {
+    await this.destroyConnector();
   },
   computed: {
     currentAction() {
@@ -110,12 +121,14 @@ export default {
     triggerAction() {
       if (this.currentAction.href) {
         this.openExternalUrl(this.currentAction.href);
+      } else if (this.currentAction.action) {
+        this[this.currentAction.action]();
       }
     },
     openExternalUrl(url) {
       shell.openExternal(url);
     },
-    async check() {
+    async startConnector() {
       const checkForSettingsFile = await ipcRenderer.invoke('checkForSettingsFile');
       if (!checkForSettingsFile.settings) return this.status = 'NoSettings';
 
@@ -128,6 +141,10 @@ export default {
       this.company = fetchSeller.company.name;
 
       return this.status = 'Success';
+    },
+    async destroyConnector() {
+      await ipcRenderer.invoke('destroyConnector');
+      return this.status = 'Idle';
     },
   },
 };

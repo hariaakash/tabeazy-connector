@@ -63,3 +63,8 @@ ipcMain.handle('fetchSeller', async () => {
 //     return false
 //   }
 // })
+
+// Destroy Connector
+ipcMain.handle('destroyConnector', async () => {
+  await globalCronTask.stop();
+});

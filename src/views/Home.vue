@@ -1,14 +1,14 @@
 <template>
-  <Hello/>
+  <Main/>
 </template>
 
 <script>
-import Hello from '../components/Home.vue';
+import Main from '../components/Main.vue';
 
 export default {
   name: 'Home',
   components: {
-    Hello,
+    Main,
   },
 };
 </script>
