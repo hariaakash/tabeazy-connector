@@ -1,5 +1,3 @@
-# https://github.com/samuelmeuli/action-electron-builder
-
 name: Build/release
 
 on: push
@@ -14,15 +12,22 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: subdir/package-lock.json
+
+      - name: 'Install Packages'
+        run: 'npm install'
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
+        env:
+          VUE_APP_API_URL: https://backend.pro.tabeazy.com/seller/connector/
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
