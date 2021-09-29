@@ -27,11 +27,8 @@ jobs:
         uses: samuelmeuli/action-electron-builder@v1
         env:
           VUE_APP_API_URL: https://backend.pro.tabeazy.com/seller/connector/
-        with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
+        run: npm run electron:build
+      
+      - name: Check Dir
+        run: ls ./electron_dist/
 
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
