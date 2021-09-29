@@ -100,7 +100,6 @@ module.exports = {
   electron_builder: {
     name: 'Tabeazy Connector',
     appId: 'com.tabeazy.connector',
-    artifactName: 'connector_v${version}.${ext}',
     directories: {
       output: 'dist_electron',
     },

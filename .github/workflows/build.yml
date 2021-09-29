@@ -31,9 +31,6 @@ jobs:
       - name: Check directory
         run: ls ./dist_electron
 
-      - name: Check directory 2
-        run: ls .
-
       # - name: Release
       #   uses: softprops/action-gh-release@v1
       #   if: startsWith(github.ref, 'refs/tags/v')
