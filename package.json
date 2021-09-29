@@ -52,9 +52,8 @@
     "vuelectro": "^1.2.4"
   },
   "main": "app/electron-main.js",
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hariaakash/tabeazy-connector.git"
+  }
 }
