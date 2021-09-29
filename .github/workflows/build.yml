@@ -29,5 +29,5 @@ jobs:
         run: npm run electron:build
       
       - name: Check Dir
-        run: ls ./electron_dist/
+        run: ls ./dist_electron/
 
