@@ -1,4 +1,4 @@
-# connector2
+# connector
 
 ## Project setup
 ```
