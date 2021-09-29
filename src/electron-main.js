@@ -1,10 +1,13 @@
 // This intercepts the error message box shown by Electron in case of an uncaughtException. Needs to be on top of the main process.
-process.on('uncaughtException', ((err) => {
+process.on('uncaughtException', (err) => {
   console.error(err);
-}));
+});
 
-const { app, BrowserWindow } = require('electron');
+const {
+  app, BrowserWindow, Tray, Menu,
+} = require('electron');
 const path = require('path');
+const AutoLaunch = require('auto-launch');
 
 require('./ipc');
 
@@ -18,6 +21,8 @@ global.__staticPath = path.join(process.cwd(), 'public');
 let rndURL = `file://${__dirname}/renderer/index.html`; // Renderer entry URL
 let isDev = false; // Set the Electron environment to development or production
 let win;
+let isQuiting;
+let tray;
 
 // Change running environment and renderer source according to the executed command
 switch (process.env.VUELECTRO_ENV) {
@@ -38,6 +43,25 @@ switch (process.env.VUELECTRO_ENV) {
 }
 
 function createWindow() {
+  // Tray
+  tray = new Tray(path.join(__staticPath, 'icon.png'));
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show App',
+      click: () => {
+        win.show();
+      },
+    },
+    {
+      label: 'Quit',
+      click: () => {
+        isQuiting = true;
+        app.quit();
+      },
+    },
+  ]);
+  tray.setContextMenu(contextMenu);
+
   win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -46,13 +70,23 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       preload: path.join(__dirname, 'preload.js'),
-      additionalArguments: [JSON.stringify({
-        VUELECTRO_RES_PATH: __resPath,
-        VUELECTRO_STATIC_PATH: __staticPath,
-        VUELECTRO_ENV: process.env.VUELECTRO_ENV,
-      })],
+      additionalArguments: [
+        JSON.stringify({
+          VUELECTRO_RES_PATH: __resPath,
+          VUELECTRO_STATIC_PATH: __staticPath,
+          VUELECTRO_ENV: process.env.VUELECTRO_ENV,
+        }),
+      ],
     },
     icon: path.join(__staticPath, 'icon.png'),
+  });
+
+  win.on('close', (event) => {
+    if (!isQuiting) {
+      event.preventDefault();
+      win.hide();
+      event.returnValue = false;
+    }
   });
 
   // Use the promise returned by loadURL() in combination with show:false and win.show() to avoid showing the window before content is loaded
@@ -75,6 +109,12 @@ app.on('ready', async () => {
     }
   }
 
+  // Auto Launch / Startup
+  const autoLaunch = new AutoLaunch({ name: 'Tabeazy Connector' });
+  autoLaunch.isEnabled().then((isEnabled) => {
+    if (!isEnabled) autoLaunch.enable();
+  });
+
   createWindow();
 });
 
@@ -92,4 +132,8 @@ app.on('activate', () => {
 // End main process if Electron instance has already been terminated
 app.on('quit', () => {
   process.exit();
+});
+
+app.on('before-quit', () => {
+  isQuiting = true;
 });
