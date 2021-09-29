@@ -98,8 +98,8 @@ module.exports = {
   // electron-builder configuration goes here
   // Visit https://www.electron.build/configuration/configuration for instructions
   electron_builder: {
-    name: 'Tabeazy Connector',
     appId: 'com.tabeazy.connector',
+    artifactName: 'connector_v${version}.${ext}',
     directories: {
       output: 'dist_electron',
     },
