@@ -40,7 +40,7 @@ module.exports = {
     // Specify the node modules you need for webpack to bundle into Vue renderer here (others will be defined as webpack externals)
     // If you plan to disable nodeIntegration, make sure to include all of your dependencies here
     bundleIn: ['core-js', 'vue', 'vue-router', 'vuex'],
-    obfuscate: true, // Whether to obfuscate the renderer process or not (recommended)
+    obfuscate: false, // Whether to obfuscate the renderer process or not (recommended)
 
     // Obfuscation configuration for renderer process goes here
     // Visit https://www.npmjs.com/package/javascript-obfuscator for instructions
@@ -50,7 +50,7 @@ module.exports = {
   // Configuration for the main process
   vMain: {
     bundle: false, // Whether to webpack the main process or not
-    obfuscate: true, // Whether to obfuscate the main process or not (recommended)
+    obfuscate: false, // Whether to obfuscate the main process or not (recommended)
     productionSourceMap: false, // Source map support for production in main process (Valid for both webpack and obfuscator)
 
     // An array of all the source files for the main process. Make sure to define each new main process source file you create here.
@@ -63,6 +63,7 @@ module.exports = {
       'helpers/axios.js',
       'helpers/store.js',
       'helpers/cron.js',
+      'helpers/events.js',
     ],
 
     // webpack configuration for main process goes here

@@ -5,6 +5,7 @@ const _ = require('lodash');
 const store = require('../helpers/store');
 const axios = require('../helpers/axios');
 const createCron = require('../helpers/cron');
+const handleEvents = require('../helpers/events');
 
 const appDataPath = app.getPath('appData');
 const settingsPath = `${appDataPath}/tabeazy-connector/settings.json`;
@@ -14,7 +15,9 @@ let globalCronTask;
 // Check for settings file
 ipcMain.handle('checkForSettingsFile', async () => {
   const settings = await fse.pathExists(settingsPath);
-  return { settingsPath, settings };
+  if (!settings) await fse.ensureFile(settingsPath);
+
+  return { settingsPath, settings: true };
 });
 
 // Check for integrity of settings file
@@ -35,15 +38,17 @@ ipcMain.handle('checkForSettingsIntegrity', async () => {
   }
 });
 
-const sendEvents = async () => {
+const handleCron = async () => {
   console.log('cron');
+  await handleEvents({ store, axios });
 };
 
 // Check API key by fetching seller
 ipcMain.handle('fetchSeller', async () => {
   try {
     const { data } = await axios.get('');
-    const task = createCron(1, sendEvents);
+    await handleCron();
+    const task = createCron(1, handleCron);
     globalCronTask = task;
 
     return data;
@@ -51,18 +56,6 @@ ipcMain.handle('fetchSeller', async () => {
     return false;
   }
 });
-
-// Check API key by fetching seller
-// ipcMain.handle('fetchSeller', async (event) => {
-//   try{
-//     const { data } = await axios.get('')
-//     const task = createCron(5, sendEvents)
-//     console.log(task)
-//     return data
-//   } catch (err) {
-//     return false
-//   }
-// })
 
 // Destroy Connector
 ipcMain.handle('destroyConnector', async () => {

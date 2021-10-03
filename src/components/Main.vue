@@ -96,6 +96,7 @@
 
 <script>
 import { ipcRenderer, shell } from 'electron';
+import store from '../helpers/store';
 
 export default {
   name: 'Home',
@@ -171,6 +172,7 @@ export default {
         const checkForSettingsFile = await ipcRenderer.invoke(
           'checkForSettingsFile',
         );
+        console.log(checkForSettingsFile.settingsPath);
         if (!checkForSettingsFile.settings) return (this.status = 'NoSettings');
 
         const checkForSettingsIntegrity = await ipcRenderer.invoke(
@@ -182,6 +184,7 @@ export default {
         if (!fetchSeller) return (this.status = 'APITokenInvalid');
 
         this.company = fetchSeller.company.name;
+        console.log(store.get('config'));
 
         return (this.status = 'Success');
       } catch (err) {
@@ -190,7 +193,9 @@ export default {
       }
     },
     async destroyConnector() {
-      await ipcRenderer.invoke('destroyConnector');
+      if (this.status === 'Success') {
+        await ipcRenderer.invoke('destroyConnector');
+      }
       return (this.status = 'Idle');
     },
   },
