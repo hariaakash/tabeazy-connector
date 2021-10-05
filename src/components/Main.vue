@@ -77,6 +77,15 @@
           >
             {{ currentAction.message }}
           </h2>
+          <div class="bg-white rounded-lg w-72 shadow block p-4 m-auto pt-5" v-if="lastEvent">
+            <div>
+              <span class="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-white bg-green-500">
+                  Last data sent at {{ lastEventFormatted }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Action -->
           <div
             class="flex items-center justify-center mt-3"
             v-if="currentAction.button"
@@ -96,6 +105,8 @@
 
 <script>
 import { ipcRenderer, shell } from 'electron';
+import moment from 'moment';
+
 import store from '../helpers/store';
 
 export default {
@@ -103,6 +114,8 @@ export default {
   data: () => ({
     company: null,
     status: 'Idle',
+    lastEvent: '',
+    lastEventInterval: null,
     actions: [
       {
         status: 'Connecting',
@@ -153,6 +166,9 @@ export default {
       const action = this.actions.find((x) => x.status === this.status);
       return action;
     },
+    lastEventFormatted() {
+      return moment(this.lastEvent).format('MM/DD/YYYY hh:mm');
+    },
   },
   methods: {
     triggerAction() {
@@ -184,7 +200,11 @@ export default {
         if (!fetchSeller) return (this.status = 'APITokenInvalid');
 
         this.company = fetchSeller.company.name;
-        console.log(store.get('config'));
+
+        this.lastEventInterval = setInterval(() => {
+          const { date } = store.get('lastEvent');
+          if (date) this.lastEvent = date;
+        }, (60 - new Date().getSeconds()) * 1000);
 
         return (this.status = 'Success');
       } catch (err) {
@@ -196,6 +216,11 @@ export default {
       if (this.status === 'Success') {
         await ipcRenderer.invoke('destroyConnector');
       }
+
+      if (this.lastEventInterval) {
+        clearInterval(this.lastEventInterval);
+      }
+
       return (this.status = 'Idle');
     },
   },
