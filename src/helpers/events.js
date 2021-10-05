@@ -1,6 +1,7 @@
 const async = require('async');
 const ADODB = require('node-adodb');
 const _ = require('lodash');
+const fse = require('fs-extra');
 
 const events = {
   profitmaker: async ({ store, axios }) => {
@@ -91,6 +92,9 @@ const events = {
         software,
         data: products,
       };
+      const appData = store.get('appData');
+      const fileName = `${appData}/data-${Date.now()}.json`;
+      await fse.writeJson(fileName, reqData, { spaces: 2 });
       await axios.post('', reqData);
       store.set('lastEvent', { ...reqData, date: Date.now() });
     } catch (err) {

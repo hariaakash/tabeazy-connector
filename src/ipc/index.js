@@ -16,6 +16,8 @@ let globalCronTask;
 ipcMain.handle('checkForSettingsFile', async () => {
   const settings = await fse.pathExists(settingsPath);
   if (!settings) await fse.ensureFile(settingsPath);
+  store.set('settingsPath', settingsPath);
+  store.set('appData', `${appDataPath}/tabeazy-connector`);
 
   return { settingsPath, settings: true };
 });
@@ -48,6 +50,7 @@ ipcMain.handle('fetchSeller', async () => {
   try {
     const { data } = await axios.get('');
     const { cron = 5 } = data.seller.connector;
+    await handleCron();
     const task = createCron(cron, handleCron);
     globalCronTask = task;
 
