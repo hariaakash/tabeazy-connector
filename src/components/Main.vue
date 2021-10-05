@@ -219,6 +219,7 @@ export default {
 
       if (this.lastEventInterval) {
         clearInterval(this.lastEventInterval);
+        this.lastEvent = null;
       }
 
       return (this.status = 'Idle');

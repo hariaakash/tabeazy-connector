@@ -47,11 +47,13 @@ const handleCron = async () => {
 ipcMain.handle('fetchSeller', async () => {
   try {
     const { data } = await axios.get('');
-    const task = createCron(1, handleCron);
+    const { cron = 5 } = data.seller.connector;
+    const task = createCron(cron, handleCron);
     globalCronTask = task;
 
     return data;
   } catch (err) {
+    console.log(err);
     return false;
   }
 });
