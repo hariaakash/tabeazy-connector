@@ -47,7 +47,6 @@ const handleCron = async () => {
 ipcMain.handle('fetchSeller', async () => {
   try {
     const { data } = await axios.get('');
-    await handleCron();
     const task = createCron(1, handleCron);
     globalCronTask = task;
 
