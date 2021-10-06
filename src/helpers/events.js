@@ -40,6 +40,7 @@ const events = {
             const cols = [
               'RndId',
               'CatId',
+              'ComId',
               'DrugId',
               'Name',
               'Packing',
@@ -63,6 +64,18 @@ const events = {
             return data;
           },
         ],
+        companies: [
+          'products',
+          async ({ products }) => {
+            const cols = ['RndId', 'Name'];
+            const colsString = cols.join(', ');
+            const companies = _.uniq(products.map((x) => x.ComId));
+            const comsString = `${companies.join(',')}`;
+            const query = `SELECT ${colsString} FROM Company WHERE RndId IN (${comsString})`;
+            const data = await connection.query(query);
+            return data;
+          },
+        ],
       });
 
       // Format Data
@@ -82,6 +95,10 @@ const events = {
             (x) => x.RndId === product.CatId,
           );
           data.category = category;
+        }
+        if (product.ComId) {
+          const company = res.companies.find((x) => x.RndId === product.ComId);
+          data.company = company;
         }
         products.push(data);
       });
