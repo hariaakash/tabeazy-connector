@@ -3,7 +3,7 @@ const ADODB = require('node-adodb');
 const _ = require('lodash');
 const fse = require('fs-extra');
 
-if (process.main.filename.indexOf('app.asar') !== -1) {
+if (require.main.filename.indexOf('app.asar') !== -1) {
   ADODB.PATH = './resources/adodb.js';
 }
 
