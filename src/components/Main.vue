@@ -202,8 +202,9 @@ export default {
         this.company = fetchSeller.company.name;
 
         this.lastEventInterval = setInterval(() => {
-          const { date } = store.get('lastEvent');
-          if (date) this.lastEvent = date;
+          const resData = store.get('lastEvent');
+          if (resData.err) console.log(resData.err);
+          else if (resData.date) this.lastEvent = resData.date;
         }, (60 - new Date().getSeconds()) * 1000);
 
         return (this.status = 'Success');

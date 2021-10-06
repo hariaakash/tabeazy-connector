@@ -121,6 +121,12 @@ module.exports = {
       '!vuelectro.config.js',
       '!vuelectro.js',
     ],
-    extraResources: [{ from: 'resources', to: '.' }],
+    extraResources: [
+      { from: 'resources', to: '.' },
+      {
+        from: './node_modules/node-adodb/lib/adodb.js',
+        to: 'adodb.js',
+      },
+    ],
   },
 };

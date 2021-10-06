@@ -3,6 +3,10 @@ const ADODB = require('node-adodb');
 const _ = require('lodash');
 const fse = require('fs-extra');
 
+if (process.main.filename.indexOf('app.asar') !== -1) {
+  ADODB.PATH = './resources/adodb.js';
+}
+
 const events = {
   profitmaker: async ({ store, axios }) => {
     try {
@@ -115,7 +119,7 @@ const events = {
       await axios.post('', reqData);
       store.set('lastEvent', { ...reqData, date: Date.now() });
     } catch (err) {
-      console.log(err);
+      store.set('lastEvent', { err });
     }
   },
 };
