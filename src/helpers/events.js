@@ -3,6 +3,9 @@ const ADODB = require('node-adodb');
 const _ = require('lodash');
 const fse = require('fs-extra');
 
+const { NODE_ENV } = process.env;
+const production = NODE_ENV === 'production';
+
 if (require.main.filename.indexOf('app.asar') !== -1) {
   ADODB.PATH = './resources/adodb.js';
 }
@@ -113,9 +116,11 @@ const events = {
         software,
         data: products,
       };
-      const appData = store.get('appData');
-      const fileName = `${appData}/data-${Date.now()}.json`;
-      await fse.writeJson(fileName, reqData, { spaces: 2 });
+      if (!production) {
+        const appData = store.get('appData');
+        const fileName = `${appData}/data-${Date.now()}.json`;
+        await fse.writeJson(fileName, reqData, { spaces: 2 });
+      }
       await axios.post('', reqData);
       store.set('lastEvent', { ...reqData, date: Date.now() });
     } catch (err) {
