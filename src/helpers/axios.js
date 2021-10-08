@@ -6,9 +6,10 @@ const baseURL = process.env.VUE_APP_API_URL;
 const instance = axios.create({ baseURL });
 
 const authInterceptor = (config) => {
+  const newConfig = { ...config };
   const token = store.get('token');
-  config.headers['x-api-key'] = token;
-  return config;
+  newConfig.headers['x-api-key'] = token;
+  return newConfig;
 };
 
 instance.interceptors.request.use(authInterceptor);

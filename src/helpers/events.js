@@ -2,6 +2,7 @@ const async = require('async');
 const ADODB = require('node-adodb');
 const _ = require('lodash');
 const fse = require('fs-extra');
+const FormData = require('form-data');
 
 const { NODE_ENV } = process.env;
 const production = NODE_ENV === 'production';
@@ -36,7 +37,7 @@ const events = {
             'SaleGst',
           ];
           const colsString = cols.join(', ');
-          const query = `SELECT ${colsString} FROM Batch WHERE Qty >= 10;`;
+          const query = `SELECT ${colsString} FROM Batch WHERE Qty >= 10 AND ExpMonth >= 0 AND ExpYear > 2021;`;
           const data = await connection.query(query);
           const grouped = _.groupBy(data, 'ProdId');
           return grouped;
@@ -106,8 +107,10 @@ const events = {
         if (product.ComId) {
           const company = res.companies.find((x) => x.RndId === product.ComId);
           data.company = company;
+
+          // Only push products if it has company
+          products.push(data);
         }
-        products.push(data);
       });
 
       // Send Data
@@ -116,12 +119,17 @@ const events = {
         software,
         data: products,
       };
-      if (!production) {
-        const appData = store.get('appData');
-        const fileName = `${appData}/data-${Date.now()}.json`;
-        await fse.writeJson(fileName, reqData, { spaces: 2 });
-      }
-      await axios.post('', reqData);
+
+      const appData = store.get('appData');
+      const fileName = `${appData}/data-${Date.now()}.json`;
+      if (!production) await fse.writeJson(fileName, reqData, { spaces: 2 });
+
+      const form = new FormData();
+      form.append('file', fse.createReadStream(fileName));
+      await axios.post('', form, {
+        headers: { ...form.getHeaders() },
+      });
+
       store.set('lastEvent', { ...reqData, date: Date.now() });
     } catch (err) {
       store.set('lastEvent', { err });
