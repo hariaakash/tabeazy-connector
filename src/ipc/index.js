@@ -17,7 +17,11 @@ ipcMain.handle('checkForSettingsFile', async () => {
   await fse.ensureFile(settingsPath);
   store.set('settingsPath', settingsPath);
   store.set('appData', `${appDataPath}/tabeazy-connector`);
-  store.set('api', axios.defaults.baseURL);
+  store.set('api', {
+    baseURL: axios.defaults.baseURL,
+    env: process.env.NODE_ENV,
+  });
+  console.log(process.env.NODE_ENV);
 
   return { settingsPath, settings: true };
 });
@@ -56,7 +60,6 @@ ipcMain.handle('fetchSeller', async () => {
 
     return data;
   } catch (err) {
-    console.log(err);
     return false;
   }
 });
