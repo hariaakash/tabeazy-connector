@@ -8,6 +8,7 @@ const {
 } = require('electron');
 const path = require('path');
 const AutoLaunch = require('auto-launch');
+const { autoUpdate } = require('electron-auto-update');
 
 require('./ipc');
 
@@ -41,6 +42,9 @@ switch (process.env.VUELECTRO_ENV) {
   default:
     break;
 }
+
+// Auto Update Trigger
+autoUpdate();
 
 function createWindow() {
   // Tray

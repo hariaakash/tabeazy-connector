@@ -112,6 +112,7 @@ module.exports = {
     directories: {
       output: 'dist_electron',
     },
+    publish: ['github'],
     files: [
       '!src${/*}',
       '!public${/*}',
