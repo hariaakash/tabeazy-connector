@@ -1,7 +1,11 @@
 const axios = require('axios');
 const store = require('./store');
 
-const baseURL = process.env.VUE_APP_API_URL;
+const { NODE_ENV } = process.env;
+const production = NODE_ENV === 'production';
+
+const server = production ? 'pro' : 'dev';
+const baseURL = `https://backend.${server}.tabeazy.com/seller/connector/`;
 
 const instance = axios.create({ baseURL });
 

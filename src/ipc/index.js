@@ -27,6 +27,7 @@ ipcMain.handle('checkForSettingsIntegrity', async () => {
   try {
     const settings = await fse.readJSON(settingsPath);
     const api = process.env.VUE_APP_API_URL;
+    store.set('api', api);
     const keysRequired = ['token', 'software', 'config'].sort();
     const keysPresent = Object.keys(settings).sort();
 
@@ -35,7 +36,6 @@ ipcMain.handle('checkForSettingsIntegrity', async () => {
     keysRequired.forEach((x) => {
       store.set(x, settings[x]);
     });
-    store.set('api', api);
     return true;
   } catch (err) {
     return false;
