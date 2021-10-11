@@ -28,7 +28,6 @@ jobs:
 
       - name: Build/release Electron app
         env:
-          VUE_APP_API_URL: https://backend.pro.tabeazy.com/seller/connector/
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run electron:build
 

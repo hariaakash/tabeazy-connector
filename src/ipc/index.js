@@ -14,10 +14,10 @@ let globalCronTask;
 
 // Check for settings file
 ipcMain.handle('checkForSettingsFile', async () => {
-  const settings = await fse.pathExists(settingsPath);
-  if (!settings) await fse.ensureFile(settingsPath);
+  await fse.ensureFile(settingsPath);
   store.set('settingsPath', settingsPath);
   store.set('appData', `${appDataPath}/tabeazy-connector`);
+  store.set('api', axios.defaults.baseURL);
 
   return { settingsPath, settings: true };
 });
@@ -26,8 +26,6 @@ ipcMain.handle('checkForSettingsFile', async () => {
 ipcMain.handle('checkForSettingsIntegrity', async () => {
   try {
     const settings = await fse.readJSON(settingsPath);
-    const api = process.env.VUE_APP_API_URL;
-    store.set('api', api);
     const keysRequired = ['token', 'software', 'config'].sort();
     const keysPresent = Object.keys(settings).sort();
 
