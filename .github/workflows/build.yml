@@ -36,4 +36,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         with:
           files: |
-            ./dist_electron/connector_v**.exe
+            ./dist_electron/connector_v**
