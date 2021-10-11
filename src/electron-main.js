@@ -8,6 +8,7 @@ const {
 } = require('electron');
 const path = require('path');
 const AutoLaunch = require('auto-launch');
+const { autoUpdater } = require('electron-updater');
 
 require('./ipc');
 
@@ -94,6 +95,9 @@ function createWindow() {
     win.show();
     if (isDev) win.webContents.openDevTools(); // Open dev tools on development mode
   });
+
+  // Auto Updater
+  autoUpdater.checkForUpdatesAndNotify();
 }
 
 app.on('ready', async () => {
