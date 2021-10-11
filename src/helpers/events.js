@@ -37,7 +37,7 @@ const events = {
             'SaleGst',
           ];
           const colsString = cols.join(', ');
-          const query = `SELECT ${colsString} FROM Batch WHERE Qty >= 10 AND ExpMonth >= 0 AND ExpYear > 2021;`;
+          const query = `SELECT ${colsString} FROM Batch WHERE Qty > 0 AND ExpMonth >= 0 AND ExpYear > 2021;`;
           const data = await connection.query(query);
           const grouped = _.groupBy(data, 'ProdId');
           return grouped;
