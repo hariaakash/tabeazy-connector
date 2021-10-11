@@ -28,7 +28,6 @@ jobs:
 
       - name: Build/release Electron app
         env:
-          NODE_ENV: production
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run electron:build
 

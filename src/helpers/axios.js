@@ -1,11 +1,7 @@
 const axios = require('axios');
 const store = require('./store');
 
-const { NODE_ENV } = process.env;
-const production = NODE_ENV === 'production';
-
-const server = production ? 'pro' : 'dev';
-const baseURL = `https://backend.${server}.tabeazy.com/seller/connector/`;
+const baseURL = 'https://backend.pro.tabeazy.com/seller/connector/';
 
 const instance = axios.create({ baseURL });
 

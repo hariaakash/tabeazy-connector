@@ -185,7 +185,6 @@ export default {
       try {
         console.log('triggered');
         this.status = 'Connecting';
-        console.log(store.get('api'));
         const checkForSettingsFile = await ipcRenderer.invoke(
           'checkForSettingsFile',
         );
