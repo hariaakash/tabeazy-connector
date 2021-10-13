@@ -77,10 +77,15 @@
           >
             {{ currentAction.message }}
           </h2>
-          <div class="bg-white rounded-lg w-72 shadow block p-4 m-auto pt-5" v-if="lastEvent">
+          <div
+            class="bg-white rounded-lg w-72 shadow block p-4 m-auto pt-5"
+            v-if="lastEvent"
+          >
             <div>
-              <span class="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-white bg-green-500">
-                  Last data sent at {{ lastEventFormatted }}
+              <span
+                class="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-white bg-green-500"
+              >
+                Last data sent at {{ lastEventFormatted }}
               </span>
             </div>
           </div>
@@ -185,33 +190,35 @@ export default {
       try {
         console.log('triggered');
         this.status = 'Connecting';
-        const checkForSettingsFile = await ipcRenderer.invoke(
-          'checkForSettingsFile',
-        );
-        console.log(checkForSettingsFile.settingsPath);
-        if (!checkForSettingsFile.settings) return (this.status = 'NoSettings');
 
+        // Check for settings file
+        await ipcRenderer.invoke('checkForSettingsFile');
+
+        // Check if settings file has all fields
         const checkForSettingsIntegrity = await ipcRenderer.invoke(
           'checkForSettingsIntegrity',
         );
         if (!checkForSettingsIntegrity) return (this.status = 'InvalidSettings');
 
+        // Fetch Seller
         const fetchSeller = await ipcRenderer.invoke('fetchSeller');
         if (!fetchSeller) return (this.status = 'APITokenInvalid');
-
         this.company = fetchSeller.company.name;
 
-        this.lastEventInterval = setInterval(() => {
-          const resData = store.get('lastEvent');
-          if (resData.err) console.log(resData.err);
-          else if (resData.date) this.lastEvent = resData.date;
-        }, (60 - new Date().getSeconds()) * 1000);
+        // Start interval(every 1min) to showcase event status
+        this.handleInterval();
+        this.lastEventInterval = setInterval(this.handleInterval, 60 * 1000);
 
         return (this.status = 'Success');
       } catch (err) {
         console.log(err);
         return (this.status = 'Idle');
       }
+    },
+    handleInterval() {
+      const resData = store.get('lastEvent');
+      if (resData.err) console.log(resData.err);
+      else if (resData.date) this.lastEvent = resData.date;
     },
     async destroyConnector() {
       if (this.status === 'Success') {

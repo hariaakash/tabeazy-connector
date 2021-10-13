@@ -29,7 +29,7 @@ jobs:
       - name: Build/release Electron app
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run electron:build
+        run: npm run electron:prod
 
       - name: Release
         uses: softprops/action-gh-release@v1

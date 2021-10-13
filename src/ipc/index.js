@@ -17,8 +17,6 @@ ipcMain.handle('checkForSettingsFile', async () => {
   await fse.ensureFile(settingsPath);
   store.set('settingsPath', settingsPath);
   store.set('appData', `${appDataPath}/tabeazy-connector`);
-
-  return { settingsPath, settings: true };
 });
 
 // Check for integrity of settings file
@@ -35,6 +33,7 @@ ipcMain.handle('checkForSettingsIntegrity', async () => {
     });
     return true;
   } catch (err) {
+    console.log(err);
     return false;
   }
 });
@@ -55,6 +54,7 @@ ipcMain.handle('fetchSeller', async () => {
 
     return data;
   } catch (err) {
+    console.log(err);
     return false;
   }
 });
