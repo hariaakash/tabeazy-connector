@@ -39,6 +39,36 @@ const fields = {
     ],
     company: ['RndId', 'Name'],
   },
+  metalink: {
+    batches: [
+      'ProductId',
+      'Packing',
+
+      'ExpiryMonth',
+      'ExpiryYear',
+      'BatchNumber',
+      'Quantity',
+
+      'SaleSchemeQty',
+      'SaleSchemeFree',
+
+      'RetailerPrice', // sale rate without gst
+      'MRP',
+      'SchemeInfo',
+    ],
+    product: [
+      'ProductKey',
+      'Category',
+
+      'Name',
+      'SinglePack',
+      'Marketer',
+      'PFormula',
+      'GSTId',
+    ],
+    gst: ['GSTKey', 'GSTPer'],
+    productCategory: ['ProdCatKey', 'Name'],
+  },
 };
 
 const events = {
@@ -233,6 +263,104 @@ const events = {
     });
     return products;
   },
+  metalink: async ({ store }) => {
+    const config = store.get('config');
+
+    // Connection
+    const defaultOpts = {
+      options: {
+        trustServerCertificate: true,
+        trustedConnection: true,
+      },
+    };
+    await mssql.connect({ ..._.merge(defaultOpts, config) });
+
+    // Parse Data
+    const res = await async.auto({
+      batches: async () => {
+        const cols = fields.metalink.batches;
+        const colsString = cols.join(', ');
+        const nextDate = moment().add(7, 'M');
+        const month = 1 + nextDate.month();
+        const year = nextDate.year();
+        const query = `SELECT ${colsString} FROM Batches WHERE Quantity > 0 AND ExpiryMonth > ${month} AND ExpiryYear >= ${year}`;
+        const data = await mssql.query(query);
+        const grouped = _.groupBy(data.recordset, 'ProductId');
+        return grouped;
+      },
+      products: [
+        'batches',
+        async ({ batches }) => {
+          const cols = fields.metalink.product;
+          const colsString = cols.join(', ');
+          const products = Object.keys(batches);
+          if (products.length === 0) return [];
+
+          const prodsString = `${products.join(',')}`;
+          const query = `SELECT ${colsString} FROM Product WHERE ProductKey IN (${prodsString})`;
+          const data = await mssql.query(query);
+          return data.recordset;
+        },
+      ],
+      categories: [
+        'products',
+        async ({ products }) => {
+          const cols = fields.metalink.productCategory;
+          const colsString = cols.join(', ');
+          const categories = _.uniq(products.map((x) => x.Category));
+          if (categories.length === 0) return [];
+
+          const catsString = `${categories.join(',')}`;
+          const query = `SELECT ${colsString} FROM ProductCategory WHERE ProdCatKey IN (${catsString})`;
+          const data = await mssql.query(query);
+          return data.recordset;
+        },
+      ],
+      gst: [
+        'products',
+        async ({ products }) => {
+          const cols = fields.metalink.gst;
+          const colsString = cols.join(', ');
+          const gsts = _.uniq(products.map((x) => x.GSTId));
+          if (gsts.length === 0) return [];
+
+          const gstString = `${gsts.join(',')}`;
+          const query = `SELECT ${colsString} FROM GST WHERE GSTKey IN (${gstString})`;
+          const data = await mssql.query(query);
+          return data.recordset;
+        },
+      ],
+    });
+
+    // Format Data
+    const products = [];
+    Object.keys(res.batches).forEach((ProdId) => {
+      const data = {
+        ProdId,
+        batches: res.batches[ProdId],
+      };
+
+      const product = res.products.find(
+        (x) => x.ProductKey === parseInt(ProdId, 10),
+      );
+      if (product) {
+        data.product = product;
+        if (product.Category) {
+          const category = res.categories.find(
+            (x) => x.ProdCatKey === product.Category,
+          );
+          data.category = category;
+        }
+        if (product.GSTId) {
+          const gst = res.gst.find((x) => x.GSTKey === product.GSTId);
+          data.gst = gst;
+        }
+
+        products.push(data);
+      }
+    });
+    return products;
+  },
 };
 
 const handleEvents = async ({ store, axios }) => {
@@ -247,7 +375,7 @@ const handleEvents = async ({ store, axios }) => {
     const reqData = { software, data };
 
     const appData = store.get('appData');
-    const fileName = `${appData}/data-${Date.now()}.json`;
+    const fileName = `${appData}/data.json`;
     await fse.writeJson(fileName, reqData, { spaces: 2 });
 
     const form = new FormData();
