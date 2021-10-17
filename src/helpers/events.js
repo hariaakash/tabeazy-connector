@@ -59,12 +59,13 @@ const fields = {
     product: [
       'ProductKey',
       'Category',
+      'GSTId',
 
       'Name',
       'SinglePack',
       'Marketer',
       'PFormula',
-      'GSTId',
+      'HSN',
     ],
     gst: ['GSTKey', 'GSTPer'],
     productCategory: ['ProdCatKey', 'Name'],
