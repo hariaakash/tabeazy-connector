@@ -112,7 +112,11 @@ module.exports = {
     directories: {
       output: 'dist_electron',
     },
-    publish: ['github'],
+    publish: [{
+      provider: 'github',
+      owner: 'hariaakash',
+      repo: 'tabeazy-connector',
+    }],
     files: [
       '!src${/*}',
       '!public${/*}',
