@@ -112,11 +112,21 @@ module.exports = {
     directories: {
       output: 'dist_electron',
     },
-    publish: [{
-      provider: 'github',
-      owner: 'hariaakash',
-      repo: 'tabeazy-connector',
-    }],
+    win: {
+      target: [
+        {
+          target: 'nsis',
+          arch: ['x64', 'ia32'],
+        },
+      ],
+    },
+    publish: [
+      {
+        provider: 'github',
+        owner: 'hariaakash',
+        repo: 'tabeazy-connector',
+      },
+    ],
     files: [
       '!src${/*}',
       '!public${/*}',
