@@ -96,8 +96,16 @@ function createWindow() {
     if (isDev) win.webContents.openDevTools(); // Open dev tools on development mode
   });
 
+  autoUpdater.on('update-downloaded', () => {
+    setImmediate(() => {
+      autoUpdater.quitAndInstall();
+    });
+  });
+
   // Auto Updater
-  autoUpdater.checkForUpdatesAndNotify();
+  win.webContents.once('did-finish-load', () => {
+    autoUpdater.checkForUpdatesAndNotify();
+  });
 }
 
 app.on('ready', async () => {

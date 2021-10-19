@@ -193,6 +193,8 @@ export default {
 
         // Check for settings file
         await ipcRenderer.invoke('checkForSettingsFile');
+        const settingsPath = store.get('settingsPath');
+        console.log(settingsPath);
 
         // Check if settings file has all fields
         const checkForSettingsIntegrity = await ipcRenderer.invoke(
