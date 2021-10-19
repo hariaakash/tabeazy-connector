@@ -5,6 +5,7 @@ const FormData = require('form-data');
 const ADODB = require('node-adodb');
 const mssql = require('mssql');
 // const moment = require('moment');
+const log = require('electron-log');
 
 if (require.main.filename.indexOf('app.asar') !== -1) {
   ADODB.PATH = './resources/adodb.js';
@@ -372,7 +373,7 @@ const handleEvents = async ({ store, axios }) => {
     const software = store.get('software');
 
     // Process Data
-    if (!events[software]) return console.log('Software not supported');
+    if (!events[software]) return log.log('Software not supported');
     const data = await events[software]({ store });
 
     // Send Data
@@ -390,7 +391,7 @@ const handleEvents = async ({ store, axios }) => {
 
     return store.set('lastEvent', { ...reqData, date: Date.now() });
   } catch (err) {
-    console.log(err);
+    log.error(err);
     return store.set('lastEvent', { err });
   }
 };

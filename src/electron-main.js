@@ -1,14 +1,15 @@
-// This intercepts the error message box shown by Electron in case of an uncaughtException. Needs to be on top of the main process.
-process.on('uncaughtException', (err) => {
-  console.error(err);
-});
-
 const {
   app, BrowserWindow, Tray, Menu,
 } = require('electron');
 const path = require('path');
 const AutoLaunch = require('auto-launch');
 const { autoUpdater } = require('electron-updater');
+const log = require('electron-log');
+
+// This intercepts the error message box shown by Electron in case of an uncaughtException. Needs to be on top of the main process.
+process.on('uncaughtException', (err) => {
+  log.error(err);
+});
 
 require('./ipc');
 
@@ -86,6 +87,7 @@ function createWindow() {
     if (!isQuiting) {
       event.preventDefault();
       win.hide();
+      // eslint-disable-next-line no-param-reassign
       event.returnValue = false;
     }
   });
@@ -112,12 +114,13 @@ app.on('ready', async () => {
   if (isDev) {
     // Install Vue Devtools
     try {
+      // eslint-disable-next-line global-require
       await require('electron-devtools-installer').default({
         id: 'ljjemllljcmogpfapbkkighbhhppjdbg', // Vue Devtools beta
         electron: '>=1.2.1',
       });
     } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString());
+      log.error('Vue Devtools failed to install:', e.toString());
     }
   }
 

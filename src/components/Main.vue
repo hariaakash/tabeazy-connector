@@ -111,6 +111,7 @@
 <script>
 import { ipcRenderer, shell } from 'electron';
 import moment from 'moment';
+import log from 'electron-log';
 
 import store from '../helpers/store';
 
@@ -161,6 +162,7 @@ export default {
     ],
   }),
   async created() {
+    console.log('Loggin to:', log.transports.file.getFile().path);
     await this.startConnector();
   },
   async beforeUnmount() {
@@ -188,13 +190,13 @@ export default {
     },
     async startConnector() {
       try {
-        console.log('triggered');
+        log.log('triggered');
         this.status = 'Connecting';
 
         // Check for settings file
         await ipcRenderer.invoke('checkForSettingsFile');
         const settingsPath = store.get('settingsPath');
-        console.log(settingsPath);
+        log.log(settingsPath);
 
         // Check if settings file has all fields
         const checkForSettingsIntegrity = await ipcRenderer.invoke(
@@ -213,13 +215,13 @@ export default {
 
         return (this.status = 'Success');
       } catch (err) {
-        console.log(err);
+        log.error(err);
         return (this.status = 'Idle');
       }
     },
     handleInterval() {
       const resData = store.get('lastEvent');
-      if (resData.err) console.log(resData.err);
+      if (resData.err) log.error(resData.err);
       else if (resData.date) this.lastEvent = resData.date;
     },
     async destroyConnector() {

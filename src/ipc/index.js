@@ -1,6 +1,7 @@
 const { app, ipcMain } = require('electron');
 const fse = require('fs-extra');
 const _ = require('lodash');
+const log = require('electron-log');
 
 const store = require('../helpers/store');
 const axios = require('../helpers/axios');
@@ -33,13 +34,13 @@ ipcMain.handle('checkForSettingsIntegrity', async () => {
     });
     return true;
   } catch (err) {
-    console.log(err);
+    log.error(err);
     return false;
   }
 });
 
 const handleCron = async () => {
-  console.log('cron');
+  log.log('cron');
   await handleEvents({ store, axios });
 };
 
@@ -54,7 +55,7 @@ ipcMain.handle('fetchSeller', async () => {
 
     return data;
   } catch (err) {
-    console.log(err);
+    log.error(err);
     return false;
   }
 });
