@@ -4,7 +4,7 @@ const fse = require('fs-extra');
 const FormData = require('form-data');
 const ADODB = require('node-adodb');
 const mssql = require('mssql');
-const moment = require('moment');
+// const moment = require('moment');
 
 if (require.main.filename.indexOf('app.asar') !== -1) {
   ADODB.PATH = './resources/adodb.js';
@@ -86,10 +86,11 @@ const events = {
       batches: async () => {
         const cols = fields.profitmaker.batch;
         const colsString = cols.join(', ');
-        const nextDate = moment().add(7, 'M');
-        const month = nextDate.month();
-        const year = nextDate.year();
-        const query = `SELECT ${colsString} FROM Batch WHERE Qty > 0 AND ExpMonth > ${month} AND ExpYear >= ${year}`;
+        // const nextDate = moment().add(7, 'M');
+        // const month = nextDate.month();
+        // const year = nextDate.year();
+        const query = `SELECT ${colsString} FROM Batch WHERE Qty > 0`;
+        // const query = `SELECT ${colsString} FROM Batch WHERE Qty > 0 AND ExpMonth > ${month} AND ExpYear >= ${year}`;
         const data = await connection.query(query);
         const grouped = _.groupBy(data, 'ProdId');
         return grouped;
@@ -184,10 +185,11 @@ const events = {
       batches: async () => {
         const cols = fields.profitmaker.batch;
         const colsString = cols.join(', ');
-        const nextDate = moment().add(7, 'M');
-        const month = 1 + nextDate.month();
-        const year = nextDate.year();
-        const query = `SELECT ${colsString} FROM Batch WHERE Qty > 0 AND ExpMonth > ${month} AND ExpYear >= ${year}`;
+        // const nextDate = moment().add(7, 'M');
+        // const month = 1 + nextDate.month();
+        // const year = nextDate.year();
+        const query = `SELECT ${colsString} FROM Batch WHERE Qty > 0`;
+        // const query = `SELECT ${colsString} FROM Batch WHERE Qty > 0 AND ExpMonth > ${month} AND ExpYear >= ${year}`;
         const data = await mssql.query(query);
         const grouped = _.groupBy(data.recordset, 'ProdId');
         return grouped;
@@ -281,10 +283,11 @@ const events = {
       batches: async () => {
         const cols = fields.metalink.batches;
         const colsString = cols.join(', ');
-        const nextDate = moment().add(7, 'M');
-        const month = 1 + nextDate.month();
-        const year = nextDate.year();
-        const query = `SELECT ${colsString} FROM Batches WHERE Quantity > 0 AND ExpiryMonth > ${month} AND ExpiryYear >= ${year}`;
+        // const nextDate = moment().add(7, 'M');
+        // const month = 1 + nextDate.month();
+        // const year = nextDate.year();
+        const query = `SELECT ${colsString} FROM Batches WHERE Quantity > 0`;
+        // const query = `SELECT ${colsString} FROM Batches WHERE Quantity > 0 AND ExpiryMonth > ${month} AND ExpiryYear >= ${year}`;
         const data = await mssql.query(query);
         const grouped = _.groupBy(data.recordset, 'ProductId');
         return grouped;
