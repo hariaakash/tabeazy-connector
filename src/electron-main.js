@@ -63,6 +63,13 @@ function createWindow() {
     },
   ]);
   tray.setContextMenu(contextMenu);
+  tray.setToolTip('Tabeazy Connector');
+  tray.on('right-click', () => {
+    tray.popUpContextMenu();
+  });
+  tray.on('click', () => {
+    win.maximize();
+  });
 
   win = new BrowserWindow({
     width: 800,
