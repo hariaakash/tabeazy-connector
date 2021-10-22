@@ -55,7 +55,7 @@ ipcMain.handle('fetchSeller', async () => {
 
     return data;
   } catch (err) {
-    log.error(err);
+    log.error(err.response || err);
     return false;
   }
 });

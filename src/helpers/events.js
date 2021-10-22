@@ -391,7 +391,7 @@ const handleEvents = async ({ store, axios }) => {
 
     return store.set('lastEvent', { ...reqData, date: Date.now() });
   } catch (err) {
-    log.error(err);
+    log.error(err.response || err);
     return store.set('lastEvent', { err });
   }
 };

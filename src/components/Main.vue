@@ -162,7 +162,6 @@ export default {
     ],
   }),
   async created() {
-    console.log('Loggin to:', log.transports.file.getFile().path);
     await this.startConnector();
   },
   async beforeUnmount() {
@@ -175,6 +174,11 @@ export default {
     },
     lastEventFormatted() {
       return moment(this.lastEvent).format('MM/DD/YYYY hh:mm');
+    },
+  },
+  watch: {
+    async status() {
+      await this.startRetry();
     },
   },
   methods: {
@@ -215,14 +219,17 @@ export default {
 
         return (this.status = 'Success');
       } catch (err) {
-        log.error(err);
+        log.error(err.response || err);
         return (this.status = 'Idle');
       }
     },
-    handleInterval() {
+    async handleInterval() {
       const resData = store.get('lastEvent');
-      if (resData.err) log.error(resData.err);
-      else if (resData.date) this.lastEvent = resData.date;
+      if (resData.err) {
+        log.error(resData.err);
+        await this.destroyConnector();
+        await this.startConnector();
+      } else if (resData.date) this.lastEvent = resData.date;
     },
     async destroyConnector() {
       if (this.status === 'Success') {
@@ -235,6 +242,14 @@ export default {
       }
 
       return (this.status = 'Idle');
+    },
+    async startRetry() {
+      if (['APITokenInvalid'].includes(this.status)) {
+        log.log('Retrying connection in 5min');
+        await setTimeout(async () => {
+          await this.startConnector();
+        }, 5 * 60 * 1000);
+      }
     },
   },
 };
