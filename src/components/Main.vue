@@ -112,6 +112,7 @@
 import { ipcRenderer, shell } from 'electron';
 import moment from 'moment';
 import log from 'electron-log';
+import { get } from 'lodash';
 
 import store from '../helpers/store';
 
@@ -220,7 +221,7 @@ export default {
           if (fetchSeller.data) return (this.status = 'APITokenInvalid');
           return (this.status = 'NetworkError');
         }
-        this.company = fetchSeller.company.name;
+        this.company = fetchSeller.data.company.name;
 
         // Start interval(every 1min) to showcase event status
         this.handleInterval();
@@ -228,14 +229,16 @@ export default {
 
         return (this.status = 'Success');
       } catch (err) {
-        log.error(err.response || err);
+        const data = get(err, 'response.data');
+        log.error(data || err);
         return (this.status = 'Idle');
       }
     },
     async handleInterval() {
       const resData = store.get('lastEvent');
       if (resData.err) {
-        log.error(resData.err);
+        const data = get(resData.err, 'response.data');
+        log.error(data || resData.err);
         await this.destroyConnector();
         await this.startConnector();
       } else if (resData.date) this.lastEvent = resData.date;
