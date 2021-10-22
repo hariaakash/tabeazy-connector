@@ -82,6 +82,7 @@ function createWindow() {
     },
     icon: path.join(__staticPath, 'icon.png'),
   });
+  win.maximize();
 
   win.on('close', (event) => {
     if (!isQuiting) {
