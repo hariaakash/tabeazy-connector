@@ -53,10 +53,11 @@ ipcMain.handle('fetchSeller', async () => {
     const task = createCron(cron, handleCron);
     globalCronTask = task;
 
-    return data;
+    return { data, err: false };
   } catch (err) {
-    log.error(err.response || err);
-    return false;
+    const data = _.get(err, 'response.data');
+    log.error(data || err);
+    return { err, data };
   }
 });
 

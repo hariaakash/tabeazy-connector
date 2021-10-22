@@ -148,6 +148,12 @@ export default {
         button: 'Visit Support',
       },
       {
+        status: 'NetworkError',
+        message: '😞 Network Problem, retrying in 5mins',
+        href: 'https://seller.tabeazy.com',
+        button: 'Visit Support',
+      },
+      {
         status: 'Success',
         message: '🛸 Synchronization going good',
         action: 'destroyConnector',
@@ -210,12 +216,15 @@ export default {
 
         // Fetch Seller
         const fetchSeller = await ipcRenderer.invoke('fetchSeller');
-        if (!fetchSeller) return (this.status = 'APITokenInvalid');
+        if (fetchSeller.err) {
+          if (fetchSeller.data) return (this.status = 'APITokenInvalid');
+          return (this.status = 'NetworkError');
+        }
         this.company = fetchSeller.company.name;
 
         // Start interval(every 1min) to showcase event status
         this.handleInterval();
-        this.lastEventInterval = setInterval(this.handleInterval, 60 * 1000);
+        this.lastEventInterval = setInterval(this.handleInterval, 1 * 60 * 1000);
 
         return (this.status = 'Success');
       } catch (err) {
@@ -245,7 +254,7 @@ export default {
     },
     async startRetry() {
       if (['APITokenInvalid'].includes(this.status)) {
-        log.log('Retrying connection in 5min');
+        log.log('Retrying connection in 5mins');
         await setTimeout(async () => {
           await this.startConnector();
         }, 5 * 60 * 1000);
