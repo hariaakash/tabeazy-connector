@@ -1,7 +1,7 @@
 const axios = require('axios');
 const store = require('./store');
 
-const baseURL = 'https://backend.pro.tabeazy.com/seller/connector/';
+const baseURL = 'https://backend.pro.tabeazy.com/connector/connector/';
 
 const instance = axios.create({ baseURL });
 
