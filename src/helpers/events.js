@@ -71,6 +71,32 @@ const fields = {
     gst: ['GSTKey', 'GSTPer'],
     productCategory: ['ProdCatKey', 'Name'],
   },
+  metalinkOff: {
+    batches: [
+      'ProductKey',
+      'BatchNumber',
+      'ExpiryMonth',
+      'ExpiryYear',
+      'TotalStock',
+    ],
+    product: [
+      'ProductKey',
+      'ProductName',
+      'Packing',
+      'MRP',
+      'PTR',
+      'GSTPercentage',
+      'VPTR',
+      'PTS',
+      'Manufacturer',
+      'Contents',
+      'Category',
+      'SchemeEnabled',
+      'SchQty',
+      'SchFree',
+      'HSN',
+    ],
+  },
 };
 
 const events = {
@@ -363,6 +389,58 @@ const events = {
 
         products.push(data);
       }
+    });
+    return products;
+  },
+  metalinkOff: async ({ store }) => {
+    const config = store.get('config');
+
+    // Connection
+    const defaultOpts = {
+      options: {
+        trustServerCertificate: true,
+        trustedConnection: true,
+      },
+    };
+    await mssql.connect({ ..._.merge(defaultOpts, config) });
+
+    // Parse Data
+    const res = await async.auto({
+      batches: async () => {
+        const cols = fields.metalinkOff.batches;
+        const colsString = cols.join(', ');
+        const query = `SELECT ${colsString} FROM vw_TE_StockPosition`;
+        const data = await mssql.query(query);
+        const grouped = _.groupBy(data.recordset, 'ProductKey');
+        return grouped;
+        // return data.recordset;
+      },
+      products: [
+        'batches',
+        async ({ batches }) => {
+          const cols = fields.metalinkOff.product;
+          const colsString = cols.join(', ');
+          // const products = batches.map((x) => x.ProductKey);
+          const products = Object.keys(batches);
+          if (products.length === 0) return [];
+
+          const prodsString = `${products.join(',')}`;
+          const query = `SELECT ${colsString} FROM vw_TE_ProductDetails WHERE ProductKey IN (${prodsString})`;
+          const data = await mssql.query(query);
+          return data.recordset;
+        },
+      ],
+    });
+
+    // Format Data
+    const products = [];
+    Object.keys(res.batches).forEach((ProductKey) => {
+      const data = {
+        ProductKey,
+        batches: res.batches[ProductKey],
+        product: res.products.find((y) => parseInt(y.ProductKey, 10) === parseInt(ProductKey, 10)),
+      };
+      products.push(data);
     });
     return products;
   },
