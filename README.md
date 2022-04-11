@@ -1,32 +1,10 @@
 # connector
 
-## Project setup
+## Update Package
 
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-
-```
-npm run build
-```
-
-### Lints and fixes files
-
-```
-npm run lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
+1. Commit changes
+2. Update version `npm version <version>`
+3. Push changes
 
 ### For ssl handshake problems
 
