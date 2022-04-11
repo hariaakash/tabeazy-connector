@@ -43,6 +43,7 @@ const fields = {
   metalink: {
     batches: [
       'ProductId',
+      'ProdCode',
       'Packing',
 
       'ExpiryMonth',
@@ -59,6 +60,7 @@ const fields = {
     ],
     product: [
       'ProductKey',
+      'ProdCode',
       'Category',
       'GSTId',
 
@@ -74,6 +76,7 @@ const fields = {
   metalinkOff: {
     batches: [
       'ProductKey',
+      'ProdCode',
       'BatchNumber',
       'ExpiryMonth',
       'ExpiryYear',
@@ -81,6 +84,7 @@ const fields = {
     ],
     product: [
       'ProductKey',
+      'ProdCode',
       'ProductName',
       'Packing',
       'MRP',
